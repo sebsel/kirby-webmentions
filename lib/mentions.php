@@ -178,7 +178,11 @@ class Mentions extends Collection {
 
   public function toHtml() {
 
-    $snippet = dirname(__DIR__) . DS . 'snippets' . DS . 'mentions.php';
+    $snippet = kirby()->roots()->snippets() . DS . 'webmentions' . DS . 'mentions.php';
+
+    if (!file_exists($snippet)) {
+      $snippet = dirname(__DIR__) . DS . 'snippets' . DS . 'mentions.php';
+    }
 
     return tpl::load($snippet, array(
       'mentions'  => $this,
