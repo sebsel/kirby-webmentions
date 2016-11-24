@@ -104,6 +104,8 @@ class Endpoint {
 
       f::write($file, $json);
 
+      kirby()->trigger('webmentions.new', [$result, $src, $target]);
+
       return true;
 
     } else {
