@@ -72,7 +72,7 @@ class Mentions extends Collection {
     if(file_exists($cache)) return;
 
     // The Regular Expression filter
-    $expression = "/(http|https|ftp|ftps)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,3}(\/\S*)?/";
+    $expression = "/(https?|ftps?)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(\/[^>,\")\s]*)?/";
     $triggered  = array();
     $endpoints  = array();
 
