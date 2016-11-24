@@ -5,6 +5,7 @@ namespace Kirby\Webmentions;
 use Header;
 use V;
 use Str;
+use Url;
 use Response;
 use F;
 use R;
@@ -85,9 +86,10 @@ class Endpoint {
       throw new Exception('Probably spam');
     }
 
-    $path = ltrim(str_replace(site()->url(), '', $target), '/');
+    $route = kirby()->router->run(url::path($target));
+    $page = call($route->action(), $route->arguments());
 
-    if(!empty($path) and $page = page($path)) {
+    if(!$page->isErrorPage()) {
 
       if(!empty($result['published'])) {
         $time = strtotime($result['published']);
