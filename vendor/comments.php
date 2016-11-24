@@ -262,7 +262,7 @@ function parse($mf, $refURL=false, $maxTextLength=150, $maxLines=2) {
     'type' => $type
   );
 
-  if($type == 'invite') 
+  if($type == 'invite')
     $result['invitee'] = $invitee;
 
   if($rsvp !== null) {

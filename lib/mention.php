@@ -50,17 +50,17 @@ class Mention extends Obj {
     $this->field('type');
     $this->field('rsvp');
 
-    $this->date = new Field($this->page, 'date', strtotime($data['published']));      
+    $this->date = new Field($this->page, 'date', strtotime($data['published']));
 
-  } 
+  }
 
   public function convertTwitterFavorite() {
 
     if(!empty($this->data['url']) and preg_match('!https:\/\/twitter.com\/(.*?)\/status!', $this->data['url'])) {
-      
+
       if(!empty($this->data['name']) and $this->data['name'] == 'likes this.') {
-        $this->data['type'] = 'like';        
-      } 
+        $this->data['type'] = 'like';
+      }
 
     }
 
@@ -69,10 +69,10 @@ class Mention extends Obj {
   public function convertTwitterRepost() {
 
     if(!empty($this->data['url']) and preg_match('!https:\/\/twitter.com\/(.*?)\/status!', $this->data['url'])) {
-      
+
       if(!empty($this->data['name']) and $this->data['name'] == 'reposts this.') {
-        $this->data['type'] = 'repost';        
-      } 
+        $this->data['type'] = 'repost';
+      }
 
     }
 
@@ -101,7 +101,7 @@ class Mention extends Obj {
     if($format) {
       $handler = kirby()->option('date.handler', 'date');
       return $handler($format, $this->date->value);
-    } else { 
+    } else {
       return $this->published;
     }
   }

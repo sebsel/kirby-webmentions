@@ -59,13 +59,13 @@ class Author extends Obj {
     if(!is_null($this->photo)) return $this->photo;
 
     $extension = f::extension($this->data['photo']);
-    $filename  = rtrim(sha1($this->url) . '.' . $extension, '.');    
+    $filename  = rtrim(sha1($this->url) . '.' . $extension, '.');
     $path      = c::get('webmentions.images', 'assets/images/mentions');
     $root      = kirby()->roots()->index() . DS . str_replace('/', DS, $path) . DS . $filename;
     $url       = kirby()->urls()->index() . '/' . $path . '/' . $filename;
     $photo     = new Media($root, $url);
-    
-    if(!$photo->exists()) {    
+
+    if(!$photo->exists()) {
 
       $image   = remote::get($this->data['photo']);
       $allowed = array('image/jpeg', 'image/png', 'image/gif');
@@ -85,7 +85,7 @@ class Author extends Obj {
       ));
     }
 
-    return $this->photo = $photo;    
+    return $this->photo = $photo;
 
   }
 

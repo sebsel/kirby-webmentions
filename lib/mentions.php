@@ -40,7 +40,7 @@ class Mentions extends Collection {
 
     if(!is_dir($this->root)) return;
 
-    $files = dir::read($this->root); 
+    $files = dir::read($this->root);
 
     // flip direction
     rsort($files);
@@ -54,7 +54,7 @@ class Mentions extends Collection {
 
       try {
         $mention = new Mention($this->page, $this->root . DS . $file);
-        $this->append($mention->id(), $mention);        
+        $this->append($mention->id(), $mention);
       } catch(Exception $e) {
 
       }
@@ -77,7 +77,7 @@ class Mentions extends Collection {
 
     // Check if there is a url in the text
     if(preg_match_all($expression, (string)$this->page->text(), $urls)) {
-      foreach($urls[0] as $url) {      
+      foreach($urls[0] as $url) {
         if(!in_array($url, $triggered)) {
           if($endpoint = $this->trigger($url)) {
             $endpoints[] = $endpoint;
@@ -86,7 +86,7 @@ class Mentions extends Collection {
         }
       }
 
-    } 
+    }
 
     data::write($cache, $endpoints);
 
@@ -104,7 +104,7 @@ class Mentions extends Collection {
         if(!str::contains($link, 'rel="webmention"')) {
           continue;
         }
-        
+
         if(!preg_match('!href="(.*?)"!', $link, $match)) {
           continue;
         }
@@ -126,7 +126,7 @@ class Mentions extends Collection {
         ));
 
         return $endpoint;
-                
+
       }
 
     }

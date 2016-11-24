@@ -22,7 +22,7 @@
   <section class="webmentions-replies">
 
     <h1><?php echo $replies->count() ?> Responses</h1>
-    <?php foreach($replies as $reply): ?> 
+    <?php foreach($replies as $reply): ?>
     <?php echo $reply ?>
     <?php endforeach ?>
 
@@ -33,7 +33,7 @@
   <section class="webmentions-mentions">
 
     <h1><?php echo $mentions->count() ?> Mentions</h1>
-    <?php foreach($mentions as $mention): ?> 
+    <?php foreach($mentions as $mention): ?>
     <?php echo $mention ?>
     <?php endforeach ?>
 

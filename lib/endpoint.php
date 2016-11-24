@@ -23,29 +23,29 @@ class Endpoint {
 
         try {
           $endpoint->start();
-          header::status(202);        
+          header::status(202);
           tpl::set('status', 'success');
           tpl::set('alert', null);
         } catch(Exception $e) {
-          header::status(400);        
+          header::status(400);
           tpl::set('status', 'error');
           tpl::set('alert', $e->getMessage());
         }
 
       } else {
-        tpl::set('status', 'idle');        
+        tpl::set('status', 'idle');
       }
 
     } else {
 
       kirby()->routes(array(
         array(
-          'pattern' => 'webmention', 
-          'method'  => 'GET|POST', 
-          'action'  => function() use($endpoint) {        
+          'pattern' => 'webmention',
+          'method'  => 'GET|POST',
+          'action'  => function() use($endpoint) {
 
             try {
-              $endpoint->start();        
+              $endpoint->start();
               echo response::success('Yay', 202);
             } catch(Exception $e) {
               echo response::error($e->getMessage());
