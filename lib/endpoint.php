@@ -86,8 +86,16 @@ class Endpoint {
       throw new Exception('Probably spam');
     }
 
+    // I need the router to think we're on GET.
+    $HACK = $_SERVER['REQUEST_METHOD'];
+    $_SERVER['REQUEST_METHOD'] = 'GET';
+
+    // Find the target page
     $route = kirby()->router->run(url::path($target));
     $page = call($route->action(), $route->arguments());
+
+    // Restore the original value.
+    $_SERVER['REQUEST_METHOD'] = $HACK;
 
     if(!$page->isErrorPage()) {
 
