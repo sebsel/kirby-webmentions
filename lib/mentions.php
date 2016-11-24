@@ -9,6 +9,7 @@ use Page;
 use Data;
 use Str;
 use V;
+use C;
 use Remote;
 use Tpl;
 use Exception;
@@ -75,8 +76,14 @@ class Mentions extends Collection {
     $triggered  = array();
     $endpoints  = array();
 
+    $searchfield = "";
+
+    foreach (c::get('webmentions.fields', ['text']) as $field) {
+      $searchfield .= $this->page->content()->get($field);
+    }
+
     // Check if there is a url in the text
-    if(preg_match_all($expression, (string)$this->page->text(), $urls)) {
+    if(preg_match_all($expression, (string)$searchfield, $urls)) {
       foreach($urls[0] as $url) {
         if(!in_array($url, $triggered)) {
           if($endpoint = $this->trigger($url)) {
