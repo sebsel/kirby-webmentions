@@ -101,6 +101,27 @@ class Mentions extends Collection {
 
   public function trigger($url) {
 
+    if ($endpoint = $this->discoverEndpoint($url)) {
+
+      $src      = $this->page->url();
+      $target   = $url;
+
+      remote::post($endpoint, array(
+        'data' => array(
+          'source' => $src,
+          'target' => $target
+        )
+      ));
+
+      return $endpoint;
+
+    } else {
+      return false;
+    }
+  }
+
+  private function discoverEndpoint($url) {
+
     $response = remote::get($url);
     $html     = $response->content();
 
@@ -117,20 +138,11 @@ class Mentions extends Collection {
         }
 
         $endpoint = $match[1];
-        $src      = $this->page->url();
-        $target   = $url;
 
         // invalid endpoint
         if(!v::url($endpoint)) {
           continue;
         }
-
-        remote::post($endpoint, array(
-          'data' => array(
-            'source' => $src,
-            'target' => $target
-          )
-        ));
 
         return $endpoint;
 
@@ -139,6 +151,7 @@ class Mentions extends Collection {
     }
 
   }
+
 
   public function toHtml() {
 
