@@ -5,6 +5,7 @@ namespace Kirby\Webmentions;
 use Field;
 use Collection;
 use Dir;
+use Url;
 use Page;
 use Data;
 use Str;
@@ -120,16 +121,34 @@ class Mentions extends Collection {
     }
   }
 
-  private function discoverEndpoint($url) {
+  public function discoverEndpoint($url) {
 
     $response = remote::get($url);
     $html     = $response->content();
+    $headers  = $response->headers();
 
-    if(preg_match_all('!\<link(.*?)\>!i', $html, $links)) {
+    $headers = array_change_key_case($headers);
+
+    if(isset($headers['link'])) {
+
+      foreach(explode(',', $headers['link']) as $link) {
+
+        if(preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)webmention(\s?.*?)"?!', $link, $match)) {
+
+          $endpoint = url::makeAbsolute($match[1], url::base($url));
+
+          // return valid endpoint or continue searching
+          if(v::url($endpoint)) {
+            return $endpoint;
+          }
+        }
+      }
+
+    } elseif(preg_match_all('!\<(a|link)(.*?)\>!i', $html, $links)) {
 
       foreach($links[0] as $link) {
 
-        if(!str::contains($link, 'rel="webmention"')) {
+        if(!preg_match('!rel="(.*?\s)?webmention(\s.*?)?"!', $link)) {
           continue;
         }
 
@@ -137,7 +156,11 @@ class Mentions extends Collection {
           continue;
         }
 
-        $endpoint = $match[1];
+        if($match[1] == "") {
+          return $url;
+        }
+
+        $endpoint = url::makeAbsolute($match[1], url::base($url));
 
         // invalid endpoint
         if(!v::url($endpoint)) {
