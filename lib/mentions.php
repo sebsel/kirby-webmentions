@@ -79,7 +79,7 @@ class Mentions extends Collection {
     $searchfield = "";
 
     foreach (c::get('webmentions.fields', ['text']) as $field) {
-      $searchfield .= $this->page->content()->get($field);
+      $searchfield .= " ".$this->page->content()->get($field);
     }
 
     // Check if there is a url in the text
