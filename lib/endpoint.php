@@ -110,8 +110,7 @@ class Endpoint {
       if(!empty($result['published'])) {
         $time = strtotime($result['published']);
       } else {
-        $time = time();
-        $result['published'] = date('c');
+        $time = 0;
       }
 
       $json = json_encode($result);
