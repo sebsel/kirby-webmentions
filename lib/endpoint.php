@@ -80,7 +80,7 @@ class Endpoint {
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'comments.php');
 
     $data   = \Mf2\fetch($src);
-    $result = \IndieWeb\comments\parse($data['items'][0], $src);
+    $result = \IndieWeb\comments\parse($data['items'][0], $target);
 
     if(empty($result)) {
       throw new Exception('Probably spam');
