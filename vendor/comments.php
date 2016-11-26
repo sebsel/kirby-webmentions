@@ -1,5 +1,6 @@
 <?php
 namespace IndieWeb\comments;
+require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'cassis.php');
 
 function truncateString($text, $length) {
   $short = ellipsize_to_word($text, $length, '...', 10);
