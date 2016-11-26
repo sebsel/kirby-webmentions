@@ -97,6 +97,14 @@ class Endpoint {
     // Restore the original value.
     $_SERVER['REQUEST_METHOD'] = $HACK;
 
+    // Maybe they did mention a syndicated link?
+    if ($result['type'] == 'mention' and $page->syndication()->isNotEmpty()) {
+      foreach ($page->syndication()->split() as $syndication) {
+        $result = \IndieWeb\comments\parse($data['items'][0], $syndication);
+        if ($result != 'mention') break;
+      }
+    }
+
     if(!$page->isErrorPage()) {
 
       if(!empty($result['published'])) {
