@@ -20,21 +20,15 @@ class Endpoint {
 
     if($page = page('webmention') and kirby()->path() == $page->uri()) {
 
-      if(r::is('post')) {
-
-        try {
-          $endpoint->start();
-          header::status(202);
-          tpl::set('status', 'success');
-          tpl::set('alert', null);
-        } catch(Exception $e) {
-          header::status(400);
-          tpl::set('status', 'error');
-          tpl::set('alert', $e->getMessage());
-        }
-
-      } else {
-        tpl::set('status', 'idle');
+      try {
+        $endpoint->start();
+        header::status(202);
+        tpl::set('status', 'success');
+        tpl::set('alert', null);
+      } catch(Exception $e) {
+        header::status(400);
+        tpl::set('status', 'error');
+        tpl::set('alert', $e->getMessage());
       }
 
     } else {
