@@ -29,24 +29,28 @@ class Endpoint {
             return site()->visit('webmention');
           }
 
-          try {
-            $endpoint->start();
-            if (page('webmention')) {
+          // If a page 'webmention' exists, give info to the template
+          if (page('webmention')) {
+            try {
+              $endpoint->start();
               header::status(202);
               tpl::set('status', 'success');
               tpl::set('alert', null);
               return site()->visit('webmention');
-            } else {
-              echo response::success('Yay', 202);
-            }
-          } catch(Exception $e) {
-            if (page('webmention')) {
-              echo response::error($e->getMessage());
-            } else {
+            } catch(Exception $e) {
               header::status(400);
               tpl::set('status', 'error');
               tpl::set('alert', $e->getMessage());
               return site()->visit('webmention');
+            }
+
+          // If there is no such page, just respond
+          } else {
+            try {
+              $endpoint->start();
+              echo response::success('Yay', 202);
+            } catch(Exception $e) {
+              echo response::error($e->getMessage());
             }
           }
         }
