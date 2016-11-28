@@ -6,6 +6,7 @@ use Header;
 use V;
 use Str;
 use Url;
+use Remote;
 use Response;
 use F;
 use R;
@@ -73,12 +74,9 @@ class Endpoint {
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'mf2.php');
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'comments.php');
 
-    $data   = \Mf2\fetch($src);
-    $result = \IndieWeb\comments\parse($data['items'][0], $target);
-
-    if(empty($result)) {
-      throw new Exception('Probably spam');
-    }
+    $source = remote::get($src);
+    $data   = \Mf2\parse($source->content);
+    $result = \IndieWeb\comments\parse($data['items'][0], $target, 1000);
 
     // I need the router to think we're on GET.
     $HACK = $_SERVER['REQUEST_METHOD'];
@@ -91,15 +89,27 @@ class Endpoint {
     // Restore the original value.
     $_SERVER['REQUEST_METHOD'] = $HACK;
 
-    // Maybe they did mention a syndicated link?
-    if ($result['type'] == 'mention' and $page->syndication()->isNotEmpty()) {
-      foreach ($page->syndication()->split() as $syndication) {
-        $result = \IndieWeb\comments\parse($data['items'][0], $syndication);
-        if ($result != 'mention') break;
-      }
-    }
-
     if(!$page->isErrorPage()) {
+
+      // Do they mention us?
+      if(!str::contains($source->content, $target)) {
+        $found = false;
+
+        // Maybe they did mention a syndicated link?
+        if ($page->syndication()->isNotEmpty()) {
+          foreach ($page->syndication()->split() as $syndication) {
+            if (str::contains($source->content, $syndication)) {
+              $result = \IndieWeb\comments\parse($data['items'][0], $syndication);
+              $found = true;
+              break;
+            }
+          }
+        }
+
+        if (!$found){
+          throw new Exception('Probably spam');
+        }
+      }
 
       if(!empty($result['published'])) {
         $time = strtotime($result['published']);
