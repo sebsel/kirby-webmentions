@@ -18,39 +18,37 @@ class Endpoint {
 
     $endpoint = $this;
 
-    if($page = page('webmention') and kirby()->path() == $page->uri()) {
+    kirby()->routes([
+      [
+        'pattern' => 'webmention',
+        'method'  => 'GET|POST',
+        'action'  => function() use($endpoint) {
 
-      try {
-        $endpoint->start();
-        header::status(202);
-        tpl::set('status', 'success');
-        tpl::set('alert', null);
-      } catch(Exception $e) {
-        header::status(400);
-        tpl::set('status', 'error');
-        tpl::set('alert', $e->getMessage());
-      }
+          if (!get('source') or !get('target')) {
+            return site()->visit('webmention');
+          }
 
-    } else {
-
-      kirby()->routes(array(
-        array(
-          'pattern' => 'webmention',
-          'method'  => 'GET|POST',
-          'action'  => function() use($endpoint) {
-
-            try {
-              $endpoint->start();
+          try {
+            $endpoint->start();
+            if (page('webmention')) {
+              header::status(202);
+              tpl::set('status', 'success');
+              tpl::set('alert', null);
+            } else {
               echo response::success('Yay', 202);
-            } catch(Exception $e) {
+            }
+          } catch(Exception $e) {
+            if (page('webmention')) {
               echo response::error($e->getMessage());
+            } else {
+              header::status(400);
+              tpl::set('status', 'error');
+              tpl::set('alert', $e->getMessage());
             }
           }
-        )
-      ));
-
-    }
-
+        }
+      ]
+    ]);
   }
 
   public function start() {
