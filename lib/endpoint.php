@@ -34,6 +34,7 @@ class Endpoint {
               header::status(202);
               tpl::set('status', 'success');
               tpl::set('alert', null);
+              return site()->visit('webmention');
             } else {
               echo response::success('Yay', 202);
             }
@@ -44,6 +45,7 @@ class Endpoint {
               header::status(400);
               tpl::set('status', 'error');
               tpl::set('alert', $e->getMessage());
+              return site()->visit('webmention');
             }
           }
         }
