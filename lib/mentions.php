@@ -144,7 +144,9 @@ class Mentions extends Collection {
         }
       }
 
-    } elseif(preg_match_all('!\<(a|link)(.*?)\>!i', $html, $links)) {
+    }
+
+    if(preg_match_all('!\<(a|link)(.*?)\>!i', $html, $links)) {
 
       foreach($links[0] as $link) {
 
@@ -173,6 +175,7 @@ class Mentions extends Collection {
 
     }
 
+    return false;
   }
 
 
