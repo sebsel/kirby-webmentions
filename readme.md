@@ -58,7 +58,7 @@ c::set('webmentions.fields', ['text', 'like_of', 'repost_of', 'in_reply_to']);
 Other improvements:
 
 - uses the router to search for pages
-- passes 20 of 21 Endpoint Discovery Tests on [Webmentions.rocks](https://webmentions.rocks)
+- passes 20 of 21 Endpoint Discovery Tests on [Webmention.rocks](https://webmention.rocks) (not test 13 unfortunately)
 - when receiving webmentions, also checks the source page for (comma separated) urls in the 'syndication' field. So: if a webmention is received and a syndicated copy is mentioned, it still counts as a valid mention.
 - bugfixes (and probably new bugs created! :D feel free to file issues)
 
