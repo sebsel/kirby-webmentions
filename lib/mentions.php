@@ -107,12 +107,19 @@ class Mentions extends Collection {
       $src      = $this->page->url();
       $target   = $url;
 
-      remote::post($endpoint, array(
+      $r = remote::post($endpoint, array(
         'data' => array(
           'source' => $src,
           'target' => $target
         )
       ));
+
+      if ($url == 'https://brid.gy/publish/twitter' and $r->code == 201) {
+        $this->page->update([
+          'syndicate-to' => null,
+          'syndication' => $r->headers['Location']
+        ]);
+      }
 
       return $endpoint;
 
