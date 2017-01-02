@@ -1,6 +1,5 @@
 <?php
 namespace IndieWeb\comments;
-require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'cassis.php');
 
 function truncateString($text, $length) {
   $short = ellipsize_to_word($text, $length, '...', 10);
@@ -177,6 +176,13 @@ function parse($mf, $refURL=false, $maxTextLength=150, $maxLines=2) {
       collectURLs($properties['like']);
       if(in_array($refURL, $properties['like']))
         $type = 'like';
+    }
+
+    // Check if this post is a "bookmark-of"
+    if($refURL && array_key_exists('bookmark-of', $properties)) {
+      collectURLs($properties['bookmark-of']);
+      if(in_array($refURL, $properties['bookmark-of']))
+        $type = 'bookmark';
     }
 
     // From http://indiewebcamp.com/comments-presentation#How_to_display

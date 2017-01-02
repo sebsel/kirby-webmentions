@@ -79,8 +79,17 @@ class Endpoint {
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'comments.php');
 
     $source = remote::get($src);
-    $data   = \Mf2\parse($source->content);
-    $result = \IndieWeb\comments\parse($data['items'][0], $target, 1000);
+    $mf2   = \Mf2\parse($source->content, $src);
+    $result = \IndieWeb\comments\parse($mf2['items'][0], $target, 1000, 20);
+
+    // php-comments does not do rel=author
+    if ($result['author']['url'] === false
+      and array_key_exists('rels', $mf2)
+      and array_key_exists('author', $mf2['rels'])
+      and array_key_exists(0, $mf2['rels']['author'])
+      and is_string($mf2['rels']['author'][0])) {
+        $result['author']['url'] = $mf2['rels']['author'][0];
+    }
 
     // I need the router to think we're on GET.
     $HACK = $_SERVER['REQUEST_METHOD'];
@@ -121,8 +130,10 @@ class Endpoint {
         $time = 0;
       }
 
+      $result['source'] = $src;
+
       $json = json_encode($result);
-      $hash = sha1($json);
+      $hash = sha1($src);
       $file = $page->root() . DS . '.webmentions' . DS . $time . '-' . $hash . '.json';
 
       f::write($file, $json);

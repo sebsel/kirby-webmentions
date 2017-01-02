@@ -31,6 +31,8 @@ class Author extends Obj {
 
     if(empty($this->data['url'])) {
       $this->data['url'] = $this->mention->data['url'];
+    } elseif(empty($this->data['name']) or empty($this->data['photo'])) {
+      $this->hcard();
     }
 
     if(empty($this->data['name'])) {
@@ -52,6 +54,58 @@ class Author extends Obj {
     }
 
     $this->$key = new Field($this->page, $key, esc($value));
+  }
+
+  public function hcard() {
+
+    $filename  = f::safeName(url::host($this->data['url'])) . '-' . substr(sha1($this->data['url']),0,10) . '.json';
+    $path      = c::get('webmentions.hcards', 'content/.hcards');
+    $root      = kirby()->roots()->index() . DS . str_replace('/', DS, $path) . DS . $filename;
+
+    if(f::exists($root)) {
+      $this->data = json_decode(f::read($root), true);
+
+    } else {
+      require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'mf2.php');
+
+      $r = remote::get($this->data['url']);
+      $mf2 = \Mf2\parse($r->content, $this->data['url']);
+
+      $hcard = [
+        'name' => false,
+        'photo' => false,
+        'url' => $this->data['url']
+      ];
+
+      if (array_key_exists('items', $mf2)
+        and array_key_exists(0, $mf2['items'])
+        and array_key_exists('type', $mf2['items'][0])
+        and array_key_exists(0, $mf2['items'][0]['type'])
+        and $mf2['items'][0]['type'][0] == 'h-card'
+        and array_key_exists('properties', $mf2['items'][0])) {
+
+        $mf2 = $mf2['items'][0]['properties'];
+
+        if (array_key_exists('name', $mf2)) {
+          if (is_string($mf2['name'])) {
+            $hcard['name'] = $mf2['name'];
+          } elseif (array_key_exists(0, $mf2['name']) and is_string($mf2['name'][0])) {
+            $hcard['name'] = $mf2['name'][0];
+          }
+        }
+
+        if (array_key_exists('photo', $mf2)) {
+          if (is_string($mf2['photo']) and v::url($mf2['photo'])) {
+            $hcard['photo'] = $mf2['photo'];
+          } elseif (array_key_exists(0, $mf2['photo']) and v::url($mf2['photo'][0])) {
+            $hcard['photo'] = $mf2['photo'][0];
+          }
+        }
+      }
+
+      f::write($root, json_encode($hcard));
+      $this->data = $hcard;
+    }
   }
 
   public function photo() {
