@@ -196,6 +196,7 @@ class Mentions extends Collection {
 
     return tpl::load($snippet, array(
       'mentions'  => $this,
+      'rsvps'     => $this->filterBy('type', 'rsvp'),
       'likes'     => $this->filterBy('type', 'like'),
       'replies'   => $this->filterBy('type', 'reply'),
       'mentions'  => $this->filterBy('type', 'mention'),
