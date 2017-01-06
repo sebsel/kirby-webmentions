@@ -72,10 +72,13 @@ class Mentions extends Collection {
 
     if(file_exists($cache)) return;
 
+    // Create the cache already, so we don't trigger ourselfs recursively
+    data::write($cache, []);
+
     // The Regular Expression filter
     $expression = "/(https?|ftps?)\:\/\/[a-zA-Z0-9\-\.]+\.[a-zA-Z]{2,}(\/[^>,\")\s]*)?/";
-    $triggered  = array();
-    $endpoints  = array();
+    $triggered  = [];
+    $logs       = [];
 
     $searchfield = "";
 
@@ -87,16 +90,15 @@ class Mentions extends Collection {
     if(preg_match_all($expression, (string)$searchfield, $urls)) {
       foreach($urls[0] as $url) {
         if(!in_array($url, $triggered)) {
-          if($endpoint = $this->trigger($url)) {
-            $endpoints[] = $endpoint;
+          if($log = $this->trigger($url)) {
+            $logs[] = $log;
           }
           $triggered[] = $url;
         }
       }
-
     }
 
-    data::write($cache, $endpoints);
+    data::write($cache, $logs);
 
   }
 
@@ -121,7 +123,12 @@ class Mentions extends Collection {
         ]);
       }
 
-      return $endpoint;
+      return [
+        'url' => $url,
+        'endpoint' => $endpoint,
+        'code' => $r->code,
+        'location' => isset($r->headers['Location']) ? $r->headers['Location'] : null,
+      ];
 
     } else {
       return false;
