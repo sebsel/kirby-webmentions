@@ -45,7 +45,7 @@ class Mentions extends Collection {
     $files = dir::read($this->root);
 
     // flip direction
-    rsort($files);
+    if(c::get('webmentions.reverse-order', false)) rsort($files);
 
     foreach($files as $file) {
 
@@ -208,6 +208,7 @@ class Mentions extends Collection {
       'replies'   => $this->filterBy('type', 'reply'),
       'mentions'  => $this->filterBy('type', 'mention'),
       'reposts'   => $this->filterBy('type', 'repost'),
+      'bookmarks' => $this->filterBy('type', 'bookmark'),
       'headline'  => $this->headline
     ));
 

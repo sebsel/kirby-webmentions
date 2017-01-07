@@ -55,6 +55,12 @@ The original plugin only looks at the 'text' field of a post. You can now add ne
 c::set('webmentions.fields', ['text', 'like_of', 'repost_of', 'in_reply_to']);
 ```
 
+I didn't like the reverse display order, so now it's an option. `false` is oldest first, `true` is newest first.
+
+```php
+c::set('webmentions.reverse-order', false);
+```
+
 Other improvements:
 
 - uses the router to search for pages

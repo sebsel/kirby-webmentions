@@ -18,6 +18,15 @@
   </section>
   <?php endif ?>
 
+  <?php if($bookmarks->count()): ?>
+  <section class="webmentions-bookmarks">
+    <h1><?php echo $bookmarks->count() ?> bookmarks</h1>
+    <?php foreach($bookmarks as $bookmark): ?>
+    <?php echo $bookmark ?>
+    <?php endforeach ?>
+  </section>
+  <?php endif ?>
+
   <?php if($replies->count()): ?>
   <section class="webmentions-replies">
 
