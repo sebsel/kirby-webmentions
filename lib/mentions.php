@@ -118,7 +118,7 @@ class Mentions extends Collection {
 
       if ($url == 'https://brid.gy/publish/twitter' and $r->code == 201) {
         $this->page->update([
-          'syndicate-to' => null,
+          'syndicate_to' => null,
           'syndication' => $r->headers['Location']
         ]);
       }
