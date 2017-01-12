@@ -92,6 +92,8 @@ class Mentions extends Collection {
         if(!in_array($url, $triggered)) {
           if($log = $this->trigger($url)) {
             $logs[] = $log;
+          } else {
+            $logs[] = ['url' => $url, 'endpoint' => false];
           }
           $triggered[] = $url;
         }
