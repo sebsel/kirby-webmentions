@@ -126,6 +126,8 @@ class Author extends Obj {
 
       f::write($root, $image->content());
 
+      $photo = new Media($root, $url);
+
       if(!in_array($photo->mime(), $allowed) or $photo->size() == 0) {
         $photo->delete();
       }
