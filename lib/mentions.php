@@ -106,7 +106,7 @@ class Mentions extends Collection {
 
   public function trigger($url) {
 
-    if ($endpoint = $this->discoverEndpoint($url)) {
+    if ($endpoint = static::discoverEndpoint($url)) {
 
       $src      = $this->page->url();
       $target   = $url;
@@ -137,9 +137,10 @@ class Mentions extends Collection {
     }
   }
 
-  public function discoverEndpoint($url) {
+  static public function discoverEndpoint($url) {
 
     $response = remote::get($url);
+    $url      = $response->info['url'];
     $html     = $response->content();
     $headers  = $response->headers();
 
@@ -151,7 +152,7 @@ class Mentions extends Collection {
 
         if(preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)webmention(\s?.*?)"?!', $link, $match)) {
 
-          $endpoint = url::makeAbsolute($match[1], url::base($url));
+          $endpoint = url::makeAbsolute($match[1], $url);
 
           // return valid endpoint or continue searching
           if(v::url($endpoint)) {
@@ -178,7 +179,7 @@ class Mentions extends Collection {
           return $url;
         }
 
-        $endpoint = url::makeAbsolute($match[1], url::base($url));
+        $endpoint = url::makeAbsolute($match[1], $url);
 
         // invalid endpoint
         if(!v::url($endpoint)) {

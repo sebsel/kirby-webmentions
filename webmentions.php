@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 load(array(
   'kirby\\webmentions\\endpoint' => __DIR__ . DS . 'lib' . DS . 'endpoint.php',
@@ -7,6 +7,7 @@ load(array(
   'kirby\\webmentions\\author'   => __DIR__ . DS . 'lib' . DS . 'author.php',
 ));
 
+require_once(__DIR__ . DS . 'vendor' . DS . 'cassis.php');
 require(__DIR__ . DS . 'helpers.php');
 
 new Kirby\Webmentions\Endpoint;
