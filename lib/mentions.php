@@ -90,10 +90,21 @@ class Mentions extends Collection {
     if(preg_match_all($expression, (string)$searchfield, $urls)) {
       foreach($urls[0] as $url) {
         if(!in_array($url, $triggered)) {
-          if($log = $this->trigger($url)) {
-            $logs[] = $log;
+
+          if(str::startsWith($url, 'https://brid.gy/publish')) {
+            $archive = [];
           } else {
-            $logs[] = ['url' => $url, 'endpoint' => false];
+            $r = remote::get('http://web.archive.org/save/'.$url);
+
+            $archive = [
+              'archive' => (isset($r->headers['Content-Location']) ? 'http://web.archive.org' . $r->headers['Content-Location'] : false)
+            ];
+          }
+
+          if($log = $this->trigger($url)) {
+            $logs[] = $log + $archive;
+          } else {
+            $logs[] = ['url' => $url, 'endpoint' => false] + $archive;
           }
           $triggered[] = $url;
         }
@@ -118,7 +129,7 @@ class Mentions extends Collection {
         )
       ));
 
-      if ($url == 'https://brid.gy/publish/twitter' and $r->code == 201) {
+      if (str::startsWith($url, 'https://brid.gy/publish') and $r->code == 201) {
         $this->page->update([
           'syndicate_to' => null,
           'syndication' => $r->headers['Location']
