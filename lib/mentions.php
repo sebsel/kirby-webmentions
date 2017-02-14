@@ -119,15 +119,20 @@ class Mentions extends Collection {
 
     if ($endpoint = static::discoverEndpoint($url)) {
 
-      $src      = $this->page->url();
-      $target   = $url;
+      $data = [
+        'source' => $this->page->url(),
+        'target' => $url
+      ];
 
-      $r = remote::post($endpoint, array(
-        'data' => array(
-          'source' => $src,
-          'target' => $target
-        )
-      ));
+      if($this->page->private()->isNotEmpty()) {
+        $data['code'] = \Firebase\JWT\JWT::encode([
+          'source' => $data['source'],
+          'target' => $data['target'],
+          'expires' => time() + 120,
+        ], c::get('jwt-signing-key', '.cJP{i6gA9rD8Qh!hz-BvYjlGrQC3T'));
+      }
+
+      $r = remote::post($endpoint, ['data' => $data]);
 
       if (str::startsWith($url, 'https://brid.gy/publish') and $r->code == 201) {
         $this->page->update([
