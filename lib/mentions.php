@@ -224,6 +224,7 @@ class Mentions extends Collection {
       'mentions'  => $this,
       'rsvps'     => $this->filterBy('type', 'rsvp'),
       'likes'     => $this->filterBy('type', 'like'),
+      'reacji'    => $this->filterBy('type', 'reacji'),
       'replies'   => $this->filterBy('type', 'reply'),
       'mentions'  => $this->filterBy('type', 'mention'),
       'reposts'   => $this->filterBy('type', 'repost'),

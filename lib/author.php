@@ -120,7 +120,7 @@ class Author extends Obj {
     $photo     = new Media($root, $url);
 
     // only allow images with a correct extension
-    if(in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif']) && !$photo->exists()) {
+    if(in_array(strtolower($extension), ['jpg', 'jpeg', 'png', 'gif', '']) && !$photo->exists()) {
 
       $image   = remote::get($this->data['photo']);
       $mime    = a::get($image->headers, 'Content-Type');

@@ -112,7 +112,7 @@ class Endpoint {
         if ($page->syndication()->isNotEmpty()) {
           foreach ($page->syndication()->split() as $syndication) {
             if (str::contains($source->content, $syndication)) {
-              $result = \IndieWeb\comments\parse($data['items'][0], $syndication);
+              $result = \IndieWeb\comments\parse($mf2['items'][0], $syndication);
               $found = true;
               break;
             }
@@ -129,6 +129,11 @@ class Endpoint {
       } else {
         $time = 0;
       }
+
+      if(isset($result['text'])
+      and strlen($result['text']) < 10
+      and \Emoji\is_single_emoji($result['text']))
+        $result['type'] = 'reacji';
 
       $result['source'] = $src;
 
