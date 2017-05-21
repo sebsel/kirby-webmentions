@@ -113,7 +113,7 @@ class Author extends Obj {
     if(!is_null($this->photo)) return $this->photo;
 
     $extension = f::extension($this->data['photo']);
-    $filename  = rtrim(sha1($this->url) . '.' . $extension, '.');
+    $filename  = rtrim(sha1($this->data['photo']) . '.' . $extension, '.');
     $path      = c::get('webmentions.images', 'assets/images/mentions');
     $root      = kirby()->roots()->index() . DS . str_replace('/', DS, $path) . DS . $filename;
     $url       = kirby()->urls()->index() . '/' . $path . '/' . $filename;
