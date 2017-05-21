@@ -78,7 +78,29 @@ class Endpoint {
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'mf2.php');
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'comments.php');
 
-    $source = remote::get($src);
+    // Private mentions
+    $data = [];
+    if(get('code')) {
+      $r = remote::head($src);
+
+      if(!isset($r->headers['WWW-Authenticate'])
+      or !$r->headers['WWW-Authenticate'] !== 'Bearer') throw new Exception('Only support for WWW-Authenticate: Bearer');
+
+      if(!isset($r->headers['Link'])
+      or !preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)token_endpoint(\s?.*?)"?!', $r->headers['Link'], $match)) throw new Exception('No token endpoint');
+
+      $r = remote::post($match[1], ['data' => [
+        'grant_type' => 'authorization_code',
+        'code' => get('code')
+      ]]);
+
+      $r = json_decode($r->content);
+
+      $data = ['headers' => ['Authorization: Bearer '.$r->access_token]];
+    }
+
+    // Get source (with or without token)
+    $source = remote::get($src, $data);
     $mf2   = \Mf2\parse($source->content, $src);
     if(!isset($mf2['items'][0])) throw new Exception('No Microformats h-* found');
     $result = \IndieWeb\comments\parse($mf2['items'][0], $target, 1000, 20);
