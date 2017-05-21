@@ -21,6 +21,7 @@ class Mention extends Obj {
   public $text   = null;
   public $date   = null;
   public $url    = null;
+  public $private = null;
 
   public function __construct($page, $file) {
 
@@ -49,6 +50,7 @@ class Mention extends Obj {
     $this->field('url');
     $this->field('type');
     $this->field('rsvp');
+    $this->field('private');
 
     $this->date = new Field($this->page, 'date', strtotime($data['published']));
 
@@ -107,6 +109,8 @@ class Mention extends Obj {
   }
 
   public function toHtml() {
+
+    if($this->private()->bool()) return '';
 
     $snippet = kirby()->roots()->snippets() . DS . 'webmentions' . DS . 'types' . DS . $this->type() . '.php';
 

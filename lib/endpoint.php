@@ -163,6 +163,7 @@ class Endpoint {
         $result['type'] = 'reacji';
 
       $result['source'] = $src;
+      if(get('code')) $result['private'] = true;
 
       $json = json_encode($result);
       $hash = sha1($src);
