@@ -84,7 +84,7 @@ class Endpoint {
       $r = remote::head($src);
 
       if(!isset($r->headers['WWW-Authenticate'])
-      or !$r->headers['WWW-Authenticate'] !== 'Bearer') throw new Exception('Only support for WWW-Authenticate: Bearer');
+      or $r->headers['WWW-Authenticate'] !== 'Bearer') throw new Exception('Only support for WWW-Authenticate: Bearer');
 
       if(!isset($r->headers['Link'])
       or !preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)token_endpoint(\s?.*?)"?!', $r->headers['Link'], $match)) throw new Exception('No token endpoint');
@@ -94,13 +94,18 @@ class Endpoint {
         'code' => get('code')
       ]]);
 
-      $r = json_decode($r->content);
+      if($r->code != 200) throw new Exception('Remote token endpoint says no (status '.$r->code.')');
 
-      $data = ['headers' => ['Authorization: Bearer '.$r->access_token]];
+      $token = json_decode($r->content, true);
+
+      if(!$token or !array_key_exists('access_token', $token)) throw new Exception('No access token received from token endpoint');
+
+      $data = ['headers' => ['Authorization: Bearer '.$token['access_token']]];
     }
 
     // Get source (with or without token)
     $source = remote::get($src, $data);
+    if($source->code != 200) throw new Exception('Source says no (status '.$source->code.')');
     $mf2   = \Mf2\parse($source->content, $src);
     if(!isset($mf2['items'][0])) throw new Exception('No Microformats h-* found');
     $result = \IndieWeb\comments\parse($mf2['items'][0], $target, 1000, 20);
@@ -147,7 +152,7 @@ class Endpoint {
         }
 
         if (!$found){
-          throw new Exception('Probably spam');
+          throw new Exception('Source does not link to target, probably spam');
         }
       }
 
