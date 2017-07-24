@@ -15,6 +15,27 @@ use Remote;
 use Tpl;
 use Exception;
 
+function url__solveRelative($base, $path) {
+  if(url::isAbsolute($path)) return $path;
+  $fragments = url::fragments($path);
+  // If the path is not /absolute, take $home in account
+  if(!str::startsWith($path, '/')) {
+    $pathFragments = $fragments;
+    $baseFragments = url::fragments($base);
+    // If $base is not a folder, remove the last part
+    if(!str::endsWith($base, '/')) array_pop($baseFragments);
+    $fragments = $baseFragments;
+    foreach($pathFragments as $f) $fragments []= $f;
+  }
+  $filter = array(
+    'hash' => '',
+    'query' => '',
+    'params' => array(),
+    'fragments' => $fragments,
+  );
+  return url::build($filter, $base);
+}
+
 class Mentions extends Collection {
 
   public $options  = array();
@@ -168,7 +189,7 @@ class Mentions extends Collection {
 
         if(preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)webmention(\s?.*?)"?!', $link, $match)) {
 
-          $endpoint = url::makeAbsolute($match[1], $url);
+          $endpoint = url__solveRelative($match[1], $url);
 
           // return valid endpoint or continue searching
           if(v::url($endpoint)) {
@@ -195,7 +216,7 @@ class Mentions extends Collection {
           return $url;
         }
 
-        $endpoint = url::makeAbsolute($match[1], $url);
+        $endpoint = url__solveRelative($match[1], $url);
 
         // invalid endpoint
         if(!v::url($endpoint)) {
