@@ -127,8 +127,8 @@ class Endpoint {
       $_SERVER['REQUEST_METHOD'] = 'GET';
 
       // Find the target page
-      $route = kirby()->router->run($path);
-      $page = call($route->action(), $route->arguments());
+      kirby()->route = kirby()->router->run($path);
+      $page = call(kirby()->route->action(), kirby()->route->arguments());
 
       // Restore the original value.
       $_SERVER['REQUEST_METHOD'] = $HACK;
