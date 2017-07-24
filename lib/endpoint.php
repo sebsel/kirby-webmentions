@@ -163,7 +163,7 @@ class Endpoint {
       }
 
       if(isset($result['text'])
-      and strlen($result['text']) < 10
+      and mb_strlen($result['text']) < 10
       and \Emoji\is_single_emoji($result['text']))
         $result['type'] = 'reacji';
 
