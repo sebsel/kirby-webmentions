@@ -110,7 +110,7 @@ class Mention extends Obj {
 
   public function toHtml() {
 
-    if($this->private()->bool()) return '';
+    if($this->private()->bool() and !is_me()) return '';
 
     $snippet = kirby()->roots()->snippets() . DS . 'webmentions' . DS . 'types' . DS . $this->type() . '.php';
 
