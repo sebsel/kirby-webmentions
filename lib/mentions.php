@@ -15,6 +15,8 @@ use Remote;
 use Tpl;
 use Exception;
 
+// I tried to add this function to the Kirby Toolkit but
+// it never got merged, so it's now here as a stand-alone.
 function url__solveRelative($base, $path) {
   if(url::isAbsolute($path)) return $path;
   $fragments = url::fragments($path);

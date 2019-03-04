@@ -22,6 +22,14 @@ Additionally you have to specify your new webmention endpoint in the header of y
 
 Your site is now able to send and receive webmentions.
 
+## More info
+
+The webmentions are sent on the first visit of the page. Your server will check the presence of a `.webmentions/pings.json`-file in the folder for that page (e.g. `content/1-some-page/.webmentions/ping.json`). If it does not exist, the server will send webmentions and store the results in this file. If it contains `[]`, it means that no webmentions have been sent. Else, it will contain a JSON-object with URLs and statuses.
+
+To re-sent webmentions, just delete or rename the file and visit the page. Please note that folders and files starting with a `.` will be hidden by macOS, feel free to Google.
+
+This also means the first visit on any page will be slow. By default, the plugin only looks at the `text` field of your page, see below for more options.
+
 ## Added options
 
 The plugin calls the 'webmentions.new' hook when a new webmention is received. I use it to log webmentions to a separate file, to keep track of them. You can even [mail](https://getkirby.com/docs/developer-guide/advanced/emails) yourself. Just be sure not to break the endpoint.
@@ -69,6 +77,15 @@ Other improvements:
 - passes 20 of 21 Endpoint Discovery Tests on [Webmention.rocks](https://webmention.rocks) (not test 13 unfortunately)
 - when receiving webmentions, also checks the source page for (comma separated) urls in the 'syndication' field. So: if a webmention is received and a syndicated copy is mentioned, it still counts as a valid mention.
 - bugfixes (and probably new bugs created! :D feel free to file issues)
+
+## Purpose of files
+
+- `lib/endpoint.php` contains the logic for *receiving* webmentions.
+- `lib/mentions.php` contains logic for displaying a list of webmentions, but weirdly also for **sending** webmentions. Main function of interest here is `ping()`, which uses `trigger()`, which calls `discoverEndpoint()`. They use `remote::` from the Kirby Toolkit to make POST and GET calls.
+- `lib/mention.php` contains logic for displaying one webmention.
+- `lib/author.php` contains logic for displaying author information.
+- `webmentions.php` just loads and registers things.
+- see `snippets/*` for templates of the webmentions.
 
 ## Author
 
