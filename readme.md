@@ -2,7 +2,7 @@
 
 This is my own spin on [Bastian Allgeiers](https://github.com/bastianallgeier/kirby-webmentions) Kirby plugin for sending and receiving [webmentions](http://indieweb.org/Webmention) with your Kirby site. It might have functionality you don't need, or miss functionality you want, but it does what I need it to do.
 
-## Deprecated: I am working on a new plugin, from scratch, which takes work. Feel free to use this one in the mean time, but it's not the most user friendly and it might not always work.
+## Deprecated: unfortunately I have no time to maintain this plugin, but it works on my site. Feel free to use it, but it might need some work to fit in your site.
 
 ## Install
 
