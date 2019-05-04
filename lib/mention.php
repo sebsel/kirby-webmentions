@@ -32,6 +32,10 @@ class Mention extends Obj {
     }
 
     if(empty($data['url'])) {
+      $data['url'] = $data['source'];
+    }
+
+    if(empty($data['url'])) {
       throw new Exception('No url found');
     }
 

@@ -79,7 +79,7 @@ class Mentions extends Collection {
         $mention = new Mention($this->page, $this->root . DS . $file);
         $this->append($mention->id(), $mention);
       } catch(Exception $e) {
-
+        echo $e->getMessage();
       }
 
     }
