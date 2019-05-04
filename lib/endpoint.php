@@ -75,6 +75,10 @@ class Endpoint {
       throw new Exception('Invalid target');
     }
 
+    if($target == $src) {
+      throw new Exception('No selfping');
+    }
+
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'mf2.php');
     require_once(dirname(__DIR__) . DS . 'vendor' . DS . 'comments.php');
 
@@ -171,7 +175,13 @@ class Endpoint {
       if(get('code')) $result['private'] = true;
 
       $json = json_encode($result);
-      $hash = sha1($src);
+      // Remove https://example.com/post/param:remove/?query=remove#hash-remove
+      //
+      $hash = sha1(url::build([
+        'params' => [],
+        'query' => [],
+        'hash' => []
+      ], $src));
       $file = $page->root() . DS . '.webmentions' . DS . $time . '-' . $hash . '.json';
 
       f::write($file, $json);
