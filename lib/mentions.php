@@ -145,7 +145,7 @@ class Mentions extends Collection {
         'target' => $url
       ];
 
-      if($this->page->private()->isNotEmpty()) {
+      if($this->page->isPrivate()) {
         $data['code'] = \Firebase\JWT\JWT::encode([
           'source' => $data['source'],
           'target' => $data['target'],
