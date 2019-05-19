@@ -189,7 +189,7 @@ class Mentions extends Collection {
 
         if(preg_match('!\<(.*?)\>;\s*rel="?(.*?\s?)webmention(\s?.*?)"?!', $link, $match)) {
 
-          $endpoint = url__solveRelative($match[1], $url);
+          $endpoint = url__solveRelative($url, $match[1]);
 
           // return valid endpoint or continue searching
           if(v::url($endpoint)) {
@@ -216,7 +216,7 @@ class Mentions extends Collection {
           return $url;
         }
 
-        $endpoint = url__solveRelative($match[1], $url);
+        $endpoint = url__solveRelative($url, $match[1]);
 
         // invalid endpoint
         if(!v::url($endpoint)) {
